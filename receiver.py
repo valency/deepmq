@@ -1,3 +1,5 @@
+import os
+from datetime import datetime
 from threading import Thread
 from time import time
 
@@ -23,8 +25,11 @@ def callback(ch, method, properties, body):
     if method.exchange == '':
         log('Exchange is not provided, data will be discarded.', 'red')
     else:
+        path = DATA_PATH + datetime.now().strftime('%Y-%m-%d') + '/'
+        if not os.path.exists(path):
+            os.makedirs(path)
         fn = method.exchange + '.' + method.routing_key + '.' + str(time()) + '.json'
-        with open(DATA_PATH + fn, 'wb') as f:
+        with open(path + fn, 'wb') as f:
             f.write(body)
         log('Saved to "' + fn + '".')
 
